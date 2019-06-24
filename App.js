@@ -50,14 +50,10 @@ export default class App extends React.Component {
 						/>
 
 						<Button onPress={this._takePhoto} title="Faceti o fotografie" />
-						{this.state.googleResponse && (
-							<FlatList
-								data={this.state.googleResponse.responses[0].labelAnnotations}
-								extraData={this.state}
-								keyExtractor={this._keyExtractor}
-								renderItem={({ item }) => <Text>Item: {item.description}</Text>}
-							/>
-						)}
+						{this.state.googleResponse &&
+							<Text>{this.state.googleResponse}</Text>
+
+						}
 						{this._maybeRenderImage()}
 						{this._maybeRenderUploadingOverlay()}
 					</View>
@@ -105,7 +101,7 @@ export default class App extends React.Component {
 			<View
 				style={{
 					marginTop: 20,
-					width: 250,
+					width: 350,
 					borderRadius: 3,
 					elevation: 2
 				}}
@@ -135,9 +131,6 @@ export default class App extends React.Component {
 					style={{ paddingVertical: 10, paddingHorizontal: 10 }}
 				/>
 
-            <Text>Subsemnata  RAFILIU CAMELIA-CRISTINA, domiciliata in  Ale.Baghetei, nr.2, solicit montarea in fata casei a unei prize de incarcare masini electrice.</Text>
-            <Text>Cu consideratie,</Text>
-            <Text>RAFILIU CAMELIA-CRISTINA</Text>
 
 				{googleResponse && (
 					<Text
@@ -145,7 +138,7 @@ export default class App extends React.Component {
 						onLongPress={this._share}
 						style={{ paddingVertical: 10, paddingHorizontal: 10 }}
 					>
-						JSON.stringify(googleResponse.responses)}
+					}
 					</Text>
 				)}
 			</View>
@@ -270,18 +263,24 @@ export default class App extends React.Component {
 			);
 			let responseJson = await response.json();
             let arrayElem = responseJson.responses[0].textAnnotations[0].description;
-			let regex_name = 'IDROU([\s\S]*?)<<' ;
+			let regex_name = 'IDROU([^<]*\<+([^<])*)\<+' ;
 			const condition_name = new RegExp(regex_name, 'g');
-            let name = arrayElem.match(condition_name);
+            let name = condition_name.exec(arrayElem, 'g')[1];
 
-			let regex_surname = '<<([\s\S]*?)<<<<<<';
-			const condition_surname = new RegExp(regex_surname, 'g');
-            let surname = arrayElem.match(condition_surname);
+            let regex_buletin = 'SERIA\s+(\S\S)\s+NR\s(\d{6})';
+            const condition_buletin= new RegExp(regex_buletin, 'g');
+            let buletin = condition_buletin.exec(arrayElem, 'g');
+
+            let regex_address = '(Jud|Mun|Sat)\..*';
+            const condition_address= new RegExp(regex_address, 'g');
+            let address = condition_address.exec(arrayElem, 'g')[1];
+
 			console.log(arrayElem);
 			console.log(name);
-			console.log(surname);
+			console.log(buletin);
+			let responseFinal = "\n\nSubsemantul(a) "+ name+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
 			this.setState({
-				googleResponse: responseJson,
+				googleResponse: responseFinal,
 				uploading: false
 			});
 		} catch (error) {
