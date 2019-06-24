@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "211014171834",
+    "firebase_url": "https://libero-1e01e.firebaseio.com",
+    "project_id": "libero-1e01e",
+    "storage_bucket": "libero-1e01e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211014171834:android:5674b08f36b88c41",
+        "android_client_info": {
+          "package_name": "com.libero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "211014171834-3rbqjmngiu7sdpsc6be463ltko70558h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc7N-Tq033gBI7PS2MjSS_g_f5CKpLkJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "211014171834-3rbqjmngiu7sdpsc6be463ltko70558h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
