@@ -109,7 +109,7 @@ export default class App extends React.Component {
 				<Button
 					style={{ marginBottom: 10 }}
 					onPress={() => this.submitToGoogle()}
-					title="Analyze!"
+					title="Analizeaza documentul!"
 				/>
 
 				<View
@@ -123,7 +123,7 @@ export default class App extends React.Component {
 						overflow: 'hidden'
 					}}
 				>
-					<Image source={{ uri: image }} style={{ width: 250, height: 250 }} />
+					<Image source={{ uri: image }} style={{ width: 350, height: 270 }} />
 				</View>
 				<Text
 					onPress={this._copyToClipboard}
@@ -262,23 +262,27 @@ export default class App extends React.Component {
 				}
 			);
 			let responseJson = await response.json();
-            let arrayElem = responseJson.responses[0].textAnnotations[0].description;
-			let regex_name = 'IDROU([^<]*\<+([^<])*)\<+' ;
-			const condition_name = new RegExp(regex_name, 'g');
-            let name = condition_name.exec(arrayElem, 'g')[1];
+            let allString = responseJson.responses[0].textAnnotations[0].description;
+
+
 
             let regex_buletin = 'SERIA\s+(\S\S)\s+NR\s(\d{6})';
-            const condition_buletin= new RegExp(regex_buletin, 'g');
-            let buletin = condition_buletin.exec(arrayElem, 'g');
+            buletin = allString.match(regex_buletin);
 
+            let regex_name = 'IDROU([^<]*\<+([^<])*)\<+' ;
+            let name = allString.match(regex_name);
+            let finalName='';
+            if (name){
+                name = name[1].replace("<<"," ");
+            }
             let regex_address = '(Jud|Mun|Sat)\..*';
-            const condition_address= new RegExp(regex_address, 'g');
-            let address = condition_address.exec(arrayElem, 'g')[1];
+            let address = allString.match(regex_address, 'g');
 
-			console.log(arrayElem);
+			console.log(address);
 			console.log(name);
+			console.log(finalName);
 			console.log(buletin);
-			let responseFinal = "\n\nSubsemantul(a) "+ name+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
+			let responseFinal = "\n\nSubsemantul(a) "+ name+ " posesor a CI "+ buletin+ " domiciliat(a) in "+ address +" solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
 			this.setState({
 				googleResponse: responseFinal,
 				uploading: false
