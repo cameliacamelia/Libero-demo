@@ -23,7 +23,9 @@ export default class App extends React.Component {
 		googleResponse: null
 	};
 
+
 	async componentDidMount() {
+	    console.disableYellowBox = true;
 		await Permissions.askAsync(Permissions.CAMERA_ROLL);
 		await Permissions.askAsync(Permissions.CAMERA);
 	}
@@ -165,6 +167,7 @@ export default class App extends React.Component {
 	};
 
 	_takePhoto = async () => {
+	    this.state.googleResponse=null;
 		let pickerResult = await ImagePicker.launchCameraAsync({
 			allowsEditing: true,
 			aspect: [4, 3]
@@ -266,23 +269,43 @@ export default class App extends React.Component {
 
 
 
-            let regex_buletin = 'SERIA\s+(\S\S)\s+NR\s(\d{6})';
+            let regex_buletin = /SERIA\s+(\S\S)\s+NR\s(\d{6})/g;
             buletin = allString.match(regex_buletin);
 
-            let regex_name = 'IDROU([^<]*\<+([^<])*)\<+' ;
+            let regex_name = /IDROU([^<]*\<+([^<])*)\<+/ ;
             let name = allString.match(regex_name);
             let finalName='';
             if (name){
                 name = name[1].replace("<<"," ");
             }
-            let regex_address = '(Jud|Mun|Sat)\..*';
-            let address = allString.match(regex_address, 'g');
+            let regex_address = /(Jud|Mun|Sat)\..*/g;
+            let address = allString.match(regex_address)[1];
+            let regex_str = /(Ale|Str|Bul)\..*/g;
+            let street = allString.match(regex_str);
+            let loc_eliberare_regex = /SPCLEP\s*(\S+)/;
+            let loc_elib = allString.match(loc_eliberare_regex);
+
+            if (loc_elib){
+                loc_elib=loc_elib[0];
+            }
+            let data_elib_regex = /(\d\d.\d\d.\d\d)-(\d\d.\d\d.\d\d\d\d)/;
+            let data_elib = allString.match(data_elib_regex);
+
+            if (data_elib){
+                data_elib = data_elib[0];
+            }
+            let cnp_regex = /CNP\s+(\d{13})/;
+            let cnp = allString.match(cnp_regex);
+            if (cnp){
+                cnp = cnp[0];
+            }
 
 			console.log(address);
+			console.log(street);
 			console.log(name);
 			console.log(finalName);
 			console.log(buletin);
-			let responseFinal = "\n\nSubsemantul(a) "+ name+ " posesor a CI "+ buletin+ " domiciliat(a) in "+ address +" solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
+			let responseFinal = "\n\nSubsemnatul(a) "+ name+ " avand " +cnp + ", posesor a Cartii de Identitate "+ buletin+ " emisa de " + loc_elib+ " valabila in perioada "+ data_elib+", domiciliat(a) in "+ address + " " + street+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
 			this.setState({
 				googleResponse: responseFinal,
 				uploading: false
