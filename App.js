@@ -279,7 +279,10 @@ export default class App extends React.Component {
                 name = name[1].replace("<<"," ");
             }
             let regex_address = /(Jud|Mun|Sat)\..*/g;
-            let address = allString.match(regex_address)[1];
+            let address = allString.match(regex_address);
+            if (address){
+                address = address[1];
+            }
             let regex_str = /(Ale|Str|Bul)\..*/g;
             let street = allString.match(regex_str);
             let loc_eliberare_regex = /SPCLEP\s*(\S+)/;
@@ -305,7 +308,121 @@ export default class App extends React.Component {
 			console.log(name);
 			console.log(finalName);
 			console.log(buletin);
-			let responseFinal = "\n\nSubsemnatul(a) "+ name+ " avand " +cnp + ", posesor a Cartii de Identitate "+ buletin+ " emisa de " + loc_elib+ " valabila in perioada "+ data_elib+", domiciliat(a) in "+ address + " " + street+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
+
+
+            orc_regex = /J\d\d\/\d\d\d\/\d\d\d\d/;
+            orc = allString.match(orc_regex);
+            if (orc){
+                orc= " ORC: "+orc[0];
+            } else{
+                orc = "";
+            }
+            console.log(orc);
+
+            cif_regex = /RO\d\d\d\d\d\d\d/;
+            cif = allString.match(cif_regex);
+            if (cif){
+                cif=cif[0];
+            }
+            console.log(cif);
+
+            chitanta_regex = /CHITANTA RAMBURS NUMERAR ..*/;
+            chitanta = allString.match(chitanta_regex);
+            if (chitanta){
+                chitanta = chitanta[0];
+            } else {
+                chitanta_regex = /Factura fiscala ..*/;
+                chitanta = allString.match(chitanta_regex);
+                if (chitanta){
+                    chitanta = chitanta[0];
+                }else{
+                    chitanta_regex = /BON FISCAL ..*/;
+                    chitanta = allString.match(chitanta_regex);
+                    if (chitanta){
+                        chitanta = chitanta[0];
+                    } else {
+                     chitanta_regex = /Chitanta ..*/;
+                     chitanta = allString.match(chitanta_regex);
+                     if (chitanta){
+                         chitanta = chitanta[0];
+                     }
+                    }
+                }
+            }
+            console.log(chitanta);
+
+            suma_regex =/suma de : (\d*.\d*) lei/;
+            suma = allString.match(suma_regex);
+            if(suma){
+                suma= suma[0];
+            } else {
+                suma_regex = /Total:(  *\d*.\d*)/;
+                suma = allString.match(suma_regex);
+                if (suma){
+                    suma = suma[0];
+                } else {
+                    suma_regex = /TOTAL=(  *\d*.\d*) LEI/;
+                    suma = allString.match(suma_regex);
+                    if (suma){
+                     suma = suma[0];
+                    } else{
+                        suma_regex =/suma de (\d*.\d*) lei/;
+                        suma = allString.match(suma_regex);
+                        if(suma){
+                             suma= suma[0];
+                        }
+                    }
+                }
+            }
+            console.log(suma);
+
+            ramburs_regex = /AWB..*/;
+            ramburs = allString.match(ramburs_regex);
+            if(ramburs){
+                ramburs = ramburs[0];
+            }else{
+                ramburs_regex = /Awb..*/;
+                ramburs = allString.match(ramburs_regex);
+                if(ramburs){
+                    ramburs = ramburs[0];
+                 } else{
+                    ramburs_regex = /CURSA NR:..*/;
+                    ramburs = allString.match(ramburs_regex);
+                    if(ramburs){
+                       sofer_regex = /SOFER..*/;
+                       sofer = allString.match(sofer_regex);
+                       if (sofer){
+                            ramburs = ramburs[0] + " cu " + sofer[0];
+                       } else {
+                            ramburs = ramburs[0];
+                       }
+
+                    } else{
+                    ramburs = chitanta;
+                    }
+                }
+
+            }
+            console.log(ramburs);
+
+            expeditor_regex = /expeditorul ..*/;
+            expeditor = allString.match(expeditor_regex);
+            if(expeditor){
+                expeditor = expeditor[0];
+            } else{
+                expeditor='';
+            }
+            console.log(expeditor);
+
+			let responseFinal = null;
+			if (name){
+			    responseFinal = "\n\nSubsemnatul(a) "+ name+ " avand " +cnp + ", posesor a Cartii de Identitate "+ buletin+ " emisa de " + loc_elib+ " valabila in perioada "+ data_elib+", domiciliat(a) in "+ address + " " + street+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
+			}
+
+			if (orc || cif){
+			    responseFinal = "\n\n"+ suma+ " reprezentand "+ ramburs + " este platita catre "+ expeditor+ " "+ orc + " CIF: "+ cif + " conform "+ chitanta;
+			}
+
 			this.setState({
 				googleResponse: responseFinal,
 				uploading: false
