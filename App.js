@@ -366,12 +366,12 @@ export default class App extends React.Component {
             if(suma){
                 suma= suma[0];
             } else {
-                suma_regex = /Total:(  *\d*.\d*)( *)(LEI|RON|Lei|Ron|lei|ron)*/;
+                suma_regex = /Total(:?|=?)(  *\d*.\d*)( *)(LEI|RON|Lei|Ron|lei|ron)*/;
                 suma = allString.match(suma_regex);
                 if (suma){
                     suma = suma[0];
                 } else {
-                    suma_regex = /TOTAL=(  *\d*.\d*)/;
+                    suma_regex = /TOTAL(=?|:?)(  *\d*.\d*)/;
                     suma = allString.match(suma_regex);
                     if (suma){
                      suma = suma[0];
