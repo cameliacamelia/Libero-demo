@@ -47,12 +47,8 @@ export default class App extends React.Component {
 					</View>
 
 					<View style={styles.helpContainer}>
-						<Button
-							onPress={this._pickImage}
-							title="Alegeti o imagine din Galeria Foto"
-						/>
-
-						<Button onPress={this._takePhoto} title="Faceti o fotografie" />
+                        Scanati un bon fiscal sau o factura
+						<Button onPress={this._takePhoto} title="Scanati" />
 						{this.state.googleResponse &&
 							<Text>{this.state.googleResponse}</Text>
 
@@ -327,17 +323,17 @@ export default class App extends React.Component {
             }
             console.log(cif);
 
-            chitanta_regex = /CHITANTA RAMBURS NUMERAR ..*/;
+            chitanta_regex = /CHITANTA ..*/;
             chitanta = allString.match(chitanta_regex);
             if (chitanta){
                 chitanta = chitanta[0];
             } else {
-                chitanta_regex = /Factura fiscala ..*/;
+                chitanta_regex = /Factura ..*/;
                 chitanta = allString.match(chitanta_regex);
                 if (chitanta){
                     chitanta = chitanta[0];
                 }else{
-                    chitanta_regex = /BON FISCAL ..*/;
+                    chitanta_regex = /BON ..*/;
                     chitanta = allString.match(chitanta_regex);
                     if (chitanta){
                         chitanta = chitanta[0];
@@ -352,7 +348,7 @@ export default class App extends React.Component {
             }
             console.log(chitanta);
 
-            suma_regex =/suma de : (\d*.\d*) lei/;
+            suma_regex =/[Ss]+uma ..* (\d*.\d*)/;
             suma = allString.match(suma_regex);
             if(suma){
                 suma= suma[0];
@@ -362,16 +358,10 @@ export default class App extends React.Component {
                 if (suma){
                     suma = suma[0];
                 } else {
-                    suma_regex = /TOTAL=(  *\d*.\d*) LEI/;
+                    suma_regex = /TOTAL=(  *\d*.\d*)/;
                     suma = allString.match(suma_regex);
                     if (suma){
                      suma = suma[0];
-                    } else{
-                        suma_regex =/suma de (\d*.\d*) lei/;
-                        suma = allString.match(suma_regex);
-                        if(suma){
-                             suma= suma[0];
-                        }
                     }
                 }
             }
