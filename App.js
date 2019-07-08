@@ -47,7 +47,8 @@ export default class App extends React.Component {
 					</View>
 
 					<View style={styles.helpContainer}>
-                        Scanati un bon fiscal sau o factura
+                        <Text>Scanati o Chitanta sau un Bon Fiscal</Text>
+                        <Text></Text>
 						<Button onPress={this._takePhoto} title="Scanati" />
 						{this.state.googleResponse &&
 							<Text>{this.state.googleResponse}</Text>
@@ -137,7 +138,7 @@ export default class App extends React.Component {
 						onLongPress={this._share}
 						style={{ paddingVertical: 10, paddingHorizontal: 10 }}
 					>
-					}
+
 					</Text>
 				)}
 			</View>
@@ -307,12 +308,18 @@ export default class App extends React.Component {
 			console.log(buletin);
 
 
-            orc_regex = /J\d\d\/\d\d\d\/\d\d\d\d/;
+           orc_regex = /J\d\d\/\d\d\d\/\d\d\d\d/;
             orc = allString.match(orc_regex);
             if (orc){
                 orc= " ORC: "+orc[0];
-            } else{
-                orc = "";
+            } else {
+                orc_regex = /J\d\d\/\d\d\d\d\/\d\d\d\d/;
+                orc = allString.match(orc_regex);
+                if (orc){
+                      orc= " ORC: "+orc[0];
+                } else{
+                    orc = "";
+                    }
             }
             console.log(orc);
 
@@ -320,25 +327,31 @@ export default class App extends React.Component {
             cif = allString.match(cif_regex);
             if (cif){
                 cif=cif[0];
+            } else {
+                 cif_regex = /(RO|R0)\d\d\d\d\d\d\d\d/;
+                 cif = allString.match(cif_regex);
+                 if (cif){
+                      cif=cif[0];
+                 }
             }
             console.log(cif);
 
-            chitanta_regex = /CHITANTA ..*/;
+            chitanta_regex = /CHITANTA ..*(\d*)/;
             chitanta = allString.match(chitanta_regex);
             if (chitanta){
                 chitanta = chitanta[0];
             } else {
-                chitanta_regex = /Factura ..*/;
+                chitanta_regex = /Factura ..*(\d*)/;
                 chitanta = allString.match(chitanta_regex);
                 if (chitanta){
                     chitanta = chitanta[0];
                 }else{
-                    chitanta_regex = /BON ..*/;
+                    chitanta_regex = /BON ..*(\d*)/;
                     chitanta = allString.match(chitanta_regex);
                     if (chitanta){
                         chitanta = chitanta[0];
                     } else {
-                     chitanta_regex = /Chitanta ..*/;
+                     chitanta_regex = /Chitanta ..*(\d*)/;
                      chitanta = allString.match(chitanta_regex);
                      if (chitanta){
                          chitanta = chitanta[0];
@@ -348,12 +361,12 @@ export default class App extends React.Component {
             }
             console.log(chitanta);
 
-            suma_regex =/[Ss]+uma ..* (\d*.\d*)/;
+            suma_regex =/[Ss]+uma ..* (\d*.\d*) (LEI|RON|Lei|Ron|lei|ron)*/;
             suma = allString.match(suma_regex);
             if(suma){
                 suma= suma[0];
             } else {
-                suma_regex = /Total:(  *\d*.\d*)/;
+                suma_regex = /Total:(  *\d*.\d*)( *)(LEI|RON|Lei|Ron|lei|ron)*/;
                 suma = allString.match(suma_regex);
                 if (suma){
                     suma = suma[0];
@@ -377,10 +390,10 @@ export default class App extends React.Component {
                 if(ramburs){
                     ramburs = ramburs[0];
                  } else{
-                    ramburs_regex = /CURSA NR:..*/;
+                    ramburs_regex = /CURSA NR: ..*/;
                     ramburs = allString.match(ramburs_regex);
                     if(ramburs){
-                       sofer_regex = /SOFER..*/;
+                       sofer_regex = /SOFER ..*/;
                        sofer = allString.match(sofer_regex);
                        if (sofer){
                             ramburs = ramburs[0] + " cu " + sofer[0];
@@ -396,7 +409,7 @@ export default class App extends React.Component {
             }
             console.log(ramburs);
 
-            expeditor_regex = /expeditorul ..*/;
+            expeditor_regex = /expeditor..*/;
             expeditor = allString.match(expeditor_regex);
             if(expeditor){
                 expeditor = expeditor[0];
@@ -410,8 +423,8 @@ export default class App extends React.Component {
 			    responseFinal = "\n\nSubsemnatul(a) "+ name+ " avand " +cnp + ", posesor a Cartii de Identitate "+ buletin+ " emisa de " + loc_elib+ " valabila in perioada "+ data_elib+", domiciliat(a) in "+ address + " " + street+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
 			}
 
-			if (orc || cif){
-			    responseFinal = "\n\n"+ suma+ " reprezentand "+ ramburs + " este platita catre "+ expeditor+ " "+ orc + " CIF: "+ cif + " conform "+ chitanta;
+			if (orc || cif || suma || ramburs){
+			    responseFinal = "\n\n"+ suma+ " reprezentand "+ ramburs + " este platita catre "+ expeditor+ " "+ orc + " CIF: "+ cif + " conform "+ chitanta +"\n\nConfirmati plata? (Da/Nu)\n";
 			}
 
 			this.setState({
