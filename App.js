@@ -47,7 +47,7 @@ export default class App extends React.Component {
 					</View>
 
 					<View style={styles.helpContainer}>
-                        <Text>Scanati o Chitanta sau un Bon Fiscal</Text>
+                        <Text>Scanati o Chitanta sau un Bon Fiscal de Taxi</Text>
                         <Text></Text>
 						<Button onPress={this._takePhoto} title="Scanati" />
 						{this.state.googleResponse &&
@@ -341,12 +341,12 @@ export default class App extends React.Component {
             if (chitanta){
                 chitanta = chitanta[0];
             } else {
-                chitanta_regex = /Factura ..*(\d*)/;
+                chitanta_regex = /(Factura|FACTURA) ..*(\d*)/;
                 chitanta = allString.match(chitanta_regex);
                 if (chitanta){
                     chitanta = chitanta[0];
                 }else{
-                    chitanta_regex = /BON ..*(\d*)/;
+                    chitanta_regex = /(BON|Bon|bon) ..*(\d*)/;
                     chitanta = allString.match(chitanta_regex);
                     if (chitanta){
                         chitanta = chitanta[0];
@@ -366,17 +366,17 @@ export default class App extends React.Component {
             if(suma){
                 suma= suma[0];
             } else {
-                suma_regex = /Total(:?|=?)(  *\d*.\d*)( *)(LEI|RON|Lei|Ron|lei|ron)*/;
-                suma = allString.match(suma_regex);
-                if (suma){
-                    suma = suma[0];
-                } else {
-                    suma_regex = /TOTAL(=?|:?)(  *\d*.\d*)/;
-                    suma = allString.match(suma_regex);
-                    if (suma){
+                 suma_regex = /Total(:?|=?)(  *\d*.\d*)( *)(LEI|RON|Lei|Ron|lei|ron)*/;
+                 suma = allString.match(suma_regex);
+                 if (suma){
                      suma = suma[0];
-                    }
-                }
+                 } else {
+                     suma_regex = /TOTAL(=?|:?)(  *\d*.\d*)/;
+                     suma = allString.match(suma_regex);
+                     if (suma){
+                      suma = suma[0];
+                     }
+                 }
             }
             console.log(suma);
 
@@ -421,9 +421,7 @@ export default class App extends React.Component {
 			let responseFinal = null;
 			if (name){
 			    responseFinal = "\n\nSubsemnatul(a) "+ name+ " avand " +cnp + ", posesor a Cartii de Identitate "+ buletin+ " emisa de " + loc_elib+ " valabila in perioada "+ data_elib+", domiciliat(a) in "+ address + " " + street+ " solicit montarea in fata casei a unei prize de incarcare masini electrice. \n\nCu consideratie,\n"+name;
-			}
-
-			if (orc || cif || suma || ramburs){
+			}else{
 			    responseFinal = "\n\n"+ suma+ " reprezentand "+ ramburs + " este platita catre "+ expeditor+ " "+ orc + " CIF: "+ cif + " conform "+ chitanta +"\n\nConfirmati plata? (Da/Nu)\n";
 			}
 
